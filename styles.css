@@ -1,0 +1,2037 @@
+/* ==========================================================================
+   PERSONA 5 FANDOM SHOWCASE — styles.css
+   Author: Persona 5 Fandom Project
+   Description: External stylesheet for a multi-page Persona 5 fandom site.
+                Inspired by Persona 5's bold UI language while maintaining
+                readability, hierarchy, and professional polish.
+   ==========================================================================
+
+   TABLE OF CONTENTS
+   --------------------------------------------------------------------------
+   1.  CSS Custom Properties (Design Tokens)
+   2.  Reset & Base Styles
+   3.  Typography
+   4.  Layout — Page Shell
+   5.  Header
+   6.  Navigation
+   7.  Main Content Areas (article, section, aside)
+   8.  Cards & Feature Blocks
+   9.  Image Effects
+   10. Grappling Hook Banner Animation (Persona 5 Feature)
+   11. CSS Animations (keyframes library)
+   12. Form Styling
+   13. Footer
+   14. Utility Classes
+   15. Responsive Design (≤ 768 px)
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. CSS CUSTOM PROPERTIES — Design Tokens
+   ========================================================================== */
+
+:root {
+
+  /* ── Color Palette ───────────────────────────────────────────────────── */
+  --color-bg:           #0d0d0d;     /* near-black page background          */
+  --color-bg-surface:   #161616;     /* slightly lighter card / section bg  */
+  --color-bg-raised:    #1e1e1e;     /* navbar, footer, elevated panels     */
+  --color-bg-muted:     #242424;     /* subtle dividers, hover rows         */
+
+  --color-red:          #e8002a;     /* Persona 5 signature red             */
+  --color-red-dark:     #b5001f;     /* darker red for pressed states       */
+  --color-red-glow:     rgba(232, 0, 42, 0.30); /* ambient red glow         */
+  --color-red-subtle:   rgba(232, 0, 42, 0.08); /* very soft red wash       */
+
+  --color-white:        #f5f5f5;     /* primary text                        */
+  --color-gray-light:   #c8c8c8;     /* body copy, secondary text           */
+  --color-gray-mid:     #888888;     /* placeholders, meta text             */
+  --color-gray-dark:    #3a3a3a;     /* borders, dividers                   */
+
+  /* ── Typography ─────────────────────────────────────────────────────── */
+  /* Oswald: condensed impact headings — evokes Persona 5's bold sans text  */
+  /* Rajdhani: stylish UI body font with geometric structure                */
+  /* Both available via Google Fonts — add the @import in your HTML <head>  */
+  /* @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Rajdhani:wght@400;500;600&display=swap'); */
+
+  --font-display:       'Oswald', 'Impact', sans-serif;
+  --font-body:          'Rajdhani', 'Trebuchet MS', sans-serif;
+  --font-mono:          'Courier New', Courier, monospace;
+
+  --fs-xs:    0.75rem;    /* 12 px */
+  --fs-sm:    0.875rem;   /* 14 px */
+  --fs-base:  1rem;       /* 16 px */
+  --fs-md:    1.125rem;   /* 18 px */
+  --fs-lg:    1.375rem;   /* 22 px */
+  --fs-xl:    1.75rem;    /* 28 px */
+  --fs-2xl:   2.25rem;    /* 36 px */
+  --fs-3xl:   3rem;       /* 48 px */
+  --fs-4xl:   4rem;       /* 64 px */
+
+  --lh-tight:  1.2;
+  --lh-normal: 1.6;
+  --lh-loose:  1.85;
+
+  /* ── Spacing scale ───────────────────────────────────────────────────── */
+  --space-1:   0.25rem;
+  --space-2:   0.5rem;
+  --space-3:   0.75rem;
+  --space-4:   1rem;
+  --space-5:   1.25rem;
+  --space-6:   1.5rem;
+  --space-8:   2rem;
+  --space-10:  2.5rem;
+  --space-12:  3rem;
+  --space-16:  4rem;
+  --space-20:  5rem;
+  --space-24:  6rem;
+
+  /* ── Borders & Radius ────────────────────────────────────────────────── */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-full: 9999px;
+
+  --border-subtle:  1px solid var(--color-gray-dark);
+  --border-accent:  2px solid var(--color-red);
+  --border-glow:    1px solid rgba(232, 0, 42, 0.45);
+
+  /* ── Shadows ─────────────────────────────────────────────────────────── */
+  --shadow-sm:    0 1px 4px rgba(0,0,0,0.45);
+  --shadow-md:    0 4px 16px rgba(0,0,0,0.55);
+  --shadow-lg:    0 8px 32px rgba(0,0,0,0.65);
+  --shadow-red:   0 4px 24px var(--color-red-glow);
+
+  /* ── Transitions ─────────────────────────────────────────────────────── */
+  --transition-fast:   150ms ease;
+  --transition-base:   250ms ease;
+  --transition-slow:   400ms ease;
+
+  /* ── Layout ──────────────────────────────────────────────────────────── */
+  --max-width:        1200px;
+  --sidebar-width:    280px;
+  --nav-height:       64px;
+  --footer-height:    auto;
+}
+
+
+/* ==========================================================================
+   2. RESET & BASE STYLES
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: 400;
+  line-height: var(--lh-normal);
+  color: var(--color-white);
+  background-color: var(--color-bg);
+
+  /* ── Shared background — P5 Metaverse atmosphere ── */
+  background-image:
+    /* bottom-left red corner vignette — signature P5 UI edge bleed */
+    radial-gradient(
+      ellipse 55% 40% at 0% 100%,
+      rgba(232, 0, 42, 0.07) 0%,
+      transparent 70%
+    ),
+    /* top-right matching dark vignette for depth */
+    radial-gradient(
+      ellipse 40% 35% at 100% 0%,
+      rgba(0, 0, 0, 0.6) 0%,
+      transparent 70%
+    ),
+    /* diagonal hatching — denser than before, evokes P5's cross-hatch panels */
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0px,
+      transparent 12px,
+      rgba(255, 255, 255, 0.018) 12px,
+      rgba(255, 255, 255, 0.018) 13px
+    ),
+    /* depth gradient */
+    linear-gradient(
+      170deg,
+      #0a0a0a 0%,
+      #111111 40%,
+      #131313 70%,
+      #0d0d0d 100%
+    );
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Remove default list styling where needed via utility class */
+ul, ol {
+  list-style: none;
+}
+
+a {
+  color: var(--color-red);
+  text-decoration: none;
+  transition: color var(--transition-base), opacity var(--transition-base);
+}
+
+a:hover {
+  color: var(--color-white);
+  opacity: 0.9;
+}
+
+a:visited {
+  /* Visited links shift slightly darker / desaturated so they're distinguishable */
+  color: #a8324a;
+}
+
+a:active {
+  color: var(--color-red-dark);
+  opacity: 0.75;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Scrollbar styling for Webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-dark);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-red);
+}
+
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: var(--lh-tight);
+  letter-spacing: 0.02em;
+  color: var(--color-white);
+  text-transform: uppercase;
+}
+
+h1 { font-size: var(--fs-4xl); }
+h2 { font-size: var(--fs-3xl); }
+h3 { font-size: var(--fs-2xl); }
+h4 { font-size: var(--fs-xl); }
+h5 { font-size: var(--fs-lg); }
+h6 { font-size: var(--fs-md); }
+
+p {
+  margin-bottom: var(--space-4);
+  color: var(--color-gray-light);
+  line-height: var(--lh-loose);
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+strong, b {
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+em, i {
+  font-style: italic;
+  color: var(--color-gray-light);
+}
+
+/* ── Special Text Effects ─────────────────────────────────────────────── */
+
+/* Red accent heading — used for section labels, feature titles */
+.heading-accent {
+  color: var(--color-red);
+  text-shadow:
+    0 0 12px var(--color-red-glow),
+    0 2px 6px rgba(0, 0, 0, 0.8);
+  position: relative;
+  display: inline-block;
+}
+
+/* Large hero/display headings with layered shadow depth */
+.heading-hero {
+  font-size: var(--fs-4xl);
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-shadow:
+    2px  2px 0px var(--color-red),
+    4px  4px 0px rgba(0, 0, 0, 0.6),
+    6px  6px 14px rgba(0, 0, 0, 0.9);
+}
+
+/* Glitch-styled heading — Persona 5 phantom thief aesthetic */
+.heading-glitch {
+  position: relative;
+  color: var(--color-white);
+  font-family: var(--font-display);
+  font-size: var(--fs-3xl);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  animation: glitch-flicker 6s infinite;
+}
+
+.heading-glitch::before,
+.heading-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.heading-glitch::before {
+  color: var(--color-red);
+  clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
+  transform: translateX(-2px);
+  animation: glitch-clip-top 3.5s infinite;
+  opacity: 0.75;
+}
+
+.heading-glitch::after {
+  color: #00d4ff;
+  clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%);
+  transform: translateX(2px);
+  animation: glitch-clip-bottom 4s infinite;
+  opacity: 0.6;
+}
+
+/* Inline red tag / label badge */
+.label-tag {
+  display: inline-block;
+  background: var(--color-red);
+  color: var(--color-white);
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: var(--space-1) var(--space-3);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+}
+
+/* Pull-quote style */
+blockquote {
+  border-left: 4px solid var(--color-red);
+  padding: var(--space-4) var(--space-6);
+  margin: var(--space-8) 0;
+  background: var(--color-red-subtle);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-style: italic;
+  color: var(--color-gray-light);
+  position: relative;
+}
+
+blockquote::before {
+  content: '\201C';
+  font-size: 4rem;
+  color: var(--color-red);
+  position: absolute;
+  top: -0.5rem;
+  left: 0.5rem;
+  line-height: 1;
+  opacity: 0.5;
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  background: var(--color-bg-muted);
+  color: var(--color-red);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+pre {
+  background: var(--color-bg-raised);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-6);
+  overflow-x: auto;
+  margin: var(--space-6) 0;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--color-gray-dark);
+  margin: var(--space-10) 0;
+  position: relative;
+}
+
+/* Red accent bar on hr — decorative divider */
+hr.accent-divider {
+  border-top-color: var(--color-red);
+  opacity: 0.5;
+  box-shadow: 0 0 8px var(--color-red-glow);
+}
+
+
+/* ==========================================================================
+   4. LAYOUT — PAGE SHELL
+   ========================================================================== */
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+/* ── Main content + sidebar grid ─────────────────────────────────────── */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr var(--sidebar-width);
+  grid-template-areas:
+    "article aside";
+  gap: var(--space-8);
+  align-items: start;
+  padding: var(--space-12) 0;
+}
+
+/* Full-width single-column layout variant */
+.content-grid--full {
+  grid-template-columns: 1fr;
+  grid-template-areas: "article";
+}
+
+article {
+  grid-area: article;
+  min-width: 0; /* prevents overflow in grid */
+}
+
+aside {
+  grid-area: aside;
+  position: sticky;
+  top: calc(var(--nav-height) + var(--space-6));
+}
+
+section {
+  margin-bottom: var(--space-16);
+}
+
+section:last-child {
+  margin-bottom: 0;
+}
+
+/* Section with top red accent bar */
+.section-titled {
+  padding-top: var(--space-8);
+  border-top: var(--border-accent);
+}
+
+.section-titled h2,
+.section-titled h3 {
+  margin-bottom: var(--space-6);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+/* ◆ diamond marker — the signature P5 UI list/heading decorator */
+.section-titled h2::before,
+.section-titled h3::before {
+  content: '◆';
+  color: var(--color-red);
+  font-size: 0.55em;
+  flex-shrink: 0;
+  text-shadow: 0 0 8px var(--color-red-glow);
+  /* Subtle spin-in on page load */
+  animation: rotate-in 0.4s ease both;
+}
+
+/* Article-level h2/h3 also get the diamond marker for consistent hierarchy */
+article h2,
+article h3 {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+article h2::before {
+  content: '◆';
+  color: var(--color-red);
+  font-size: 0.5em;
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+article h3::before {
+  content: '▶';
+  color: var(--color-red);
+  font-size: 0.42em;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+main {
+  flex: 1;
+  padding-bottom: var(--space-20);
+}
+
+
+/* ==========================================================================
+   5. HEADER
+   ========================================================================== */
+
+header {
+  background: var(--color-bg-raised);
+  /* Layered bottom accent: thick red line + faint diagonal stripe band */
+  border-bottom: 3px solid var(--color-red);
+  box-shadow:
+    0 2px 0 rgba(232, 0, 42, 0.15),
+    0 4px 24px rgba(0, 0, 0, 0.7),
+    0 1px 0 rgba(232, 0, 42, 0.5);
+  /* Diagonal stripe overlay in the header itself — P5 texture */
+  background-image:
+    repeating-linear-gradient(
+      -60deg,
+      transparent 0px,
+      transparent 14px,
+      rgba(255, 255, 255, 0.012) 14px,
+      rgba(255, 255, 255, 0.012) 15px
+    );
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-height);
+  gap: var(--space-6);
+}
+
+/* Site logo / wordmark */
+.site-logo {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--transition-base);
+}
+
+.site-logo span {
+  color: var(--color-red);
+}
+
+.site-logo:hover {
+  color: var(--color-red);
+  text-shadow: 0 0 10px var(--color-red-glow);
+}
+
+.site-logo:visited {
+  color: var(--color-white);
+}
+
+/* Site tagline beneath logo (optional) */
+.site-tagline {
+  font-size: var(--fs-xs);
+  color: var(--color-gray-mid);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: var(--space-1);
+}
+
+
+/* ==========================================================================
+   6. NAVIGATION
+   ========================================================================== */
+
+nav {
+  display: flex;
+  align-items: center;
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-list li {
+  position: relative;
+}
+
+/* Individual navigation link */
+.nav-list a {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-gray-light);
+  padding: var(--space-2) var(--space-5);
+  /* P5 parallelogram shape — the signature skewed nav pill */
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+  position: relative;
+  text-decoration: none;
+  transition:
+    color       var(--transition-base),
+    background  var(--transition-base),
+    box-shadow  var(--transition-base);
+}
+
+/* Animated underline bar — slides in from left on hover */
+.nav-list a::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: var(--color-red);
+  border-radius: var(--radius-full);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--transition-base);
+}
+
+/* ── Hover state ── */
+.nav-list a:hover {
+  color: var(--color-white);
+  background: rgba(232, 0, 42, 0.18);
+}
+
+.nav-list a:hover::after {
+  transform: scaleX(1);
+}
+
+/* ── Active / current page state ── */
+.nav-list a.active,
+.nav-list a[aria-current="page"] {
+  color: var(--color-white);
+  background: var(--color-red);
+}
+
+.nav-list a.active::after,
+.nav-list a[aria-current="page"]::after {
+  transform: scaleX(1);
+  background: var(--color-white);
+}
+
+/* ── Click / focus state ── */
+.nav-list a:active {
+  background: var(--color-red-dark);
+  transform: scale(0.97);
+  color: var(--color-white);
+}
+
+.nav-list a:focus-visible {
+  outline: 2px solid var(--color-red);
+  outline-offset: 3px;
+}
+
+/* ── Visited nav links ── */
+.nav-list a:visited {
+  color: var(--color-gray-mid);
+}
+
+.nav-list a:visited:hover {
+  color: var(--color-white);
+}
+
+/* ── Hamburger toggle (hidden on desktop, shown on mobile) ── */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  background: var(--color-white);
+  border-radius: var(--radius-full);
+  transition: transform var(--transition-base), opacity var(--transition-base);
+}
+
+.nav-toggle[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+
+/* ==========================================================================
+   7. MAIN CONTENT AREAS — article, section, aside
+   ========================================================================== */
+
+/* ── Article ─────────────────────────────────────────────────────────── */
+article .article-header {
+  margin-bottom: var(--space-10);
+  padding-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-gray-dark);
+}
+
+article .article-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  margin-bottom: var(--space-4);
+  font-size: var(--fs-sm);
+  color: var(--color-gray-mid);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+article .article-meta time {
+  color: var(--color-red);
+  font-weight: 600;
+}
+
+/* ── Aside / Sidebar ──────────────────────────────────────────────────── */
+aside {
+  background: var(--color-bg-surface);
+  border: var(--border-subtle);
+  border-top: var(--border-accent);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: var(--space-6);
+}
+
+aside h3,
+aside h4 {
+  font-size: var(--fs-sm);
+  color: var(--color-white);
+  margin-bottom: var(--space-4);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
+  letter-spacing: 0.12em;
+  /* P5 sidebar heading: filled red parallelogram label */
+  background: var(--color-red);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  display: block;
+}
+
+/* Aside list — e.g. related links, character list */
+aside ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+aside ul li {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-bg-muted);
+  font-size: var(--fs-sm);
+  color: var(--color-gray-light);
+  transition: color var(--transition-fast), padding-left var(--transition-fast);
+}
+
+aside ul li:hover {
+  color: var(--color-white);
+  padding-left: var(--space-2);
+}
+
+aside ul li a {
+  color: inherit;
+}
+
+aside ul li:last-child {
+  border-bottom: none;
+}
+
+
+/* ==========================================================================
+   8. CARDS & FEATURE BLOCKS
+   ========================================================================== */
+
+/* Base card */
+.card {
+  background: var(--color-bg-surface);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  /* P5-inspired: one snipped corner = angular UI panel feel */
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  overflow: hidden;
+  transition:
+    transform    var(--transition-base),
+    box-shadow   var(--transition-base),
+    border-color var(--transition-base);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    var(--shadow-lg),
+    0 0 0 1px rgba(232, 0, 42, 0.4),
+    0 0 20px rgba(232, 0, 42, 0.1);
+  border-color: rgba(232, 0, 42, 0.5);
+}
+
+.card-body {
+  padding: var(--space-6);
+}
+
+.card-title {
+  font-size: var(--fs-lg);
+  margin-bottom: var(--space-2);
+}
+
+/* Card grid — responsive multi-column layout */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-6);
+}
+
+/* Featured / highlight card — red left border accent */
+.card--featured {
+  border-left: 4px solid var(--color-red);
+  box-shadow: var(--shadow-red);
+}
+
+/* ── Call-to-action button ────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: var(--space-3) var(--space-8);
+  border: none;
+  /* P5 parallelogram — more aggressive angle than nav pills */
+  clip-path: polygon(14px 0%, 100% 0%, calc(100% - 14px) 100%, 0% 100%);
+  border-radius: 0; /* clip-path handles shaping */
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background    var(--transition-base),
+    box-shadow    var(--transition-base),
+    transform     var(--transition-fast),
+    color         var(--transition-base);
+}
+
+/* Shimmer sweep on hover */
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 100%
+  );
+  transition: left var(--transition-slow);
+}
+
+.btn:hover::before {
+  left: 150%;
+}
+
+/* Primary red button */
+.btn--primary {
+  /* CSS linear gradient — red to darker red, adds P5 depth */
+  background: linear-gradient(
+    135deg,
+    var(--color-red) 0%,
+    var(--color-red-dark) 100%
+  );
+  color: var(--color-white);
+}
+
+.btn--primary:hover {
+  background: linear-gradient(
+    135deg,
+    #ff0f36 0%,
+    var(--color-red) 100%
+  );
+  box-shadow:
+    var(--shadow-red),
+    0 0 0 1px rgba(232, 0, 42, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn--primary:active {
+  transform: scale(0.97) translateY(0);
+  background: var(--color-red-dark);
+}
+
+.btn--primary:visited {
+  color: var(--color-white);
+}
+
+/* Ghost / outline button */
+.btn--outline {
+  background: transparent;
+  color: var(--color-red);
+  /* Outline via inset box-shadow so clip-path doesn't cut it off */
+  box-shadow: inset 0 0 0 2px var(--color-red);
+}
+
+.btn--outline:hover {
+  background: var(--color-red);
+  color: var(--color-white);
+  transform: translateY(-2px);
+}
+
+/* ── Notification / info box ─────────────────────────────────────────── */
+.info-box {
+  background: var(--color-red-subtle);
+  border: var(--border-glow);
+  border-radius: var(--radius-md);
+  padding: var(--space-5) var(--space-6);
+  margin: var(--space-6) 0;
+  font-size: var(--fs-sm);
+  color: var(--color-gray-light);
+}
+
+
+/* ==========================================================================
+   9. IMAGE EFFECTS
+   ========================================================================== */
+
+/* Base shared reset for effect images */
+.image-effect1,
+.image-effect2 {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  overflow: hidden; /* used on wrapping containers */
+}
+
+/* ─────────────────────────────────────────────────────────────────────── */
+/* .image-effect1
+   Effect: Grayscale → Color reveal on hover + subtle red-shadow bloom
+   Use on character showcase or gallery images.
+   Wrap <img> inside a <div class="image-effect1">
+   ─────────────────────────────────────────────────────────────────────── */
+.image-effect1 {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.image-effect1 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* CSS transition — smooth filter change */
+  filter: grayscale(100%) brightness(0.75);
+  transition:
+    filter     var(--transition-slow),
+    transform  var(--transition-slow);
+}
+
+.image-effect1:hover img {
+  /* CSS transition to full color + slight upward zoom */
+  filter: grayscale(0%) brightness(1);
+  transform: scale(1.05);
+}
+
+/* Overlay caption bar that slides up on hover */
+.image-effect1 .img-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.82));
+  color: var(--color-white);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: var(--space-6) var(--space-4) var(--space-3);
+  /* CSS transition — slides in from below */
+  transform: translateY(100%);
+  transition: transform var(--transition-base);
+}
+
+.image-effect1:hover .img-caption {
+  transform: translateY(0);
+}
+
+/* Thin red border accent that draws in on hover */
+.image-effect1::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--color-red);
+  border-radius: var(--radius-md);
+  opacity: 0;
+  /* CSS transition */
+  transition: opacity var(--transition-base), box-shadow var(--transition-base);
+  pointer-events: none;
+}
+
+.image-effect1:hover::after {
+  opacity: 1;
+  box-shadow: inset 0 0 16px rgba(232, 0, 42, 0.2);
+}
+
+/* ─────────────────────────────────────────────────────────────────────── */
+/* .image-effect2
+   Effect: Drop-shadow depth + scale on hover + diagonal red slash overlay
+   Great for featured art, portraits, or scene illustrations.
+   Wrap <img> inside a <div class="image-effect2">
+   ─────────────────────────────────────────────────────────────────────── */
+.image-effect2 {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  /* CSS linear gradient used as decorative overlay — defined via pseudo */
+  /* CSS transformation: perspective tilt */
+  transition:
+    transform  var(--transition-slow),
+    box-shadow var(--transition-slow);
+}
+
+.image-effect2 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* CSS transition */
+  transition: transform var(--transition-slow);
+}
+
+.image-effect2:hover {
+  /* CSS transformation — slight upward scale */
+  transform: scale(1.03) translateY(-3px);
+  /* CSS drop-shadow effect */
+  box-shadow:
+    var(--shadow-lg),
+    0 0 30px var(--color-red-glow),
+    0 0 60px rgba(232, 0, 42, 0.12);
+}
+
+.image-effect2:hover img {
+  transform: scale(1.04);
+}
+
+/* Diagonal red slash overlay — CSS linear gradient decorative layer */
+.image-effect2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  /* CSS linear gradient — simulates a Persona 5 slashing light streak */
+  background: linear-gradient(
+    105deg,
+    transparent  0%,
+    rgba(232, 0, 42, 0.08) 45%,
+    rgba(232, 0, 42, 0.22) 50%,
+    rgba(232, 0, 42, 0.08) 55%,
+    transparent  100%
+  );
+  /* CSS transition */
+  transition: left var(--transition-slow);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.image-effect2:hover::before {
+  left: 150%;
+}
+
+/* Corner tag badge on images */
+.image-badge {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  background: var(--color-red);
+  color: var(--color-white);
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px var(--space-3);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%);
+  z-index: 3;
+}
+
+
+/* ==========================================================================
+   10. GRAPPLING HOOK BANNER — Persona 5 Pull Animation
+   ========================================================================== */
+
+.grapple-banner {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-12);
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Grappling cable shooting across screen */
+.grapple-cable {
+  position: absolute;
+  top: 80px;
+  left: -220px;
+  width: 0;
+  height: 4px;
+
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    #ffffff 25%,
+    var(--color-red) 60%,
+    #ffffff 100%
+  );
+
+  box-shadow: 0 0 12px var(--color-red-glow);
+
+  transform: rotate(10deg);
+  transform-origin: left center;
+
+  z-index: 5;
+
+  animation: cable-shoot 0.45s ease-out forwards;
+}
+
+/* Grappling hook head */
+.grapple-cable::after {
+  content: '';
+  position: absolute;
+  right: -16px;
+  top: 50%;
+
+  width: 18px;
+  height: 18px;
+
+  border-top: 4px solid var(--color-red);
+  border-right: 4px solid #ffffff;
+
+  border-radius: 0 100% 0 0;
+
+  transform: translateY(-50%) rotate(30deg);
+
+  box-shadow: 0 0 8px var(--color-red-glow);
+}
+
+/* Card pulled by grappling hook */
+.grapple-content {
+  position: relative;
+  z-index: 10;
+
+  max-width: 850px;
+  width: min(90%, 850px);
+
+  background: linear-gradient(
+    105deg,
+    rgba(232, 0, 42, 0.18) 0%,
+    var(--color-bg-raised) 20%,
+    var(--color-bg-surface) 100%
+  );
+
+  border: var(--border-accent);
+  border-radius: var(--radius-md);
+
+  padding: var(--space-10) var(--space-8);
+
+  box-shadow:
+    var(--shadow-red),
+    var(--shadow-lg);
+
+  transform: translateX(130vw) rotate(-6deg) scale(0.92);
+  opacity: 0;
+
+  animation:
+    grapple-drag 0.9s cubic-bezier(0.2, 1, 0.3, 1) 0.35s forwards,
+    grapple-impact 0.22s ease-out 0.78s;
+}
+
+/* Persona 5 red slash sweep effect */
+.grapple-content::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: -120%;
+  width: 70%;
+  height: 140%;
+
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255,255,255,0.06) 35%,
+    rgba(232,0,42,0.85) 48%,
+    rgba(255,255,255,0.18) 52%,
+    rgba(232,0,42,0.75) 56%,
+    transparent 100%
+  );
+
+  transform: rotate(-12deg);
+  pointer-events: none;
+  z-index: 2;
+
+  opacity: 0;
+
+  animation: slash-sweep 0.35s ease-out 0.72s forwards;
+}
+
+/* ==========================================================================
+   Cable animation — shoots across screen
+   ========================================================================== */
+
+@keyframes cable-shoot {
+
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    width: 120vw;
+    opacity: 1;
+  }
+
+}
+
+/* ==========================================================================
+   Card pull animation
+   ========================================================================== */
+
+@keyframes grapple-drag {
+
+  0% {
+    transform: translateX(130vw) rotate(-6deg) scale(0.92);
+    opacity: 0;
+  }
+
+  55% {
+    transform: translateX(-35px) rotate(2deg) scale(1.02);
+    opacity: 1;
+  }
+
+  70% {
+    transform: translateX(12px) rotate(-1deg) scale(1);
+  }
+
+  100% {
+    transform: translateX(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+
+}
+
+/* ==========================================================================
+   Slash sweep animation
+   ========================================================================== */
+
+@keyframes slash-sweep {
+
+  0% {
+    left: -120%;
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    left: 140%;
+    opacity: 0;
+  }
+
+}
+
+/* ==========================================================================
+   Impact flash when card lands
+   ========================================================================== */
+
+@keyframes grapple-impact {
+
+  0% {
+    box-shadow:
+      var(--shadow-red),
+      var(--shadow-lg);
+  }
+
+  50% {
+    box-shadow:
+      0 0 0 3px rgba(232, 0, 42, 0.35),
+      0 0 28px rgba(232, 0, 42, 0.35),
+      var(--shadow-lg);
+  }
+
+  100% {
+    box-shadow:
+      var(--shadow-red),
+      var(--shadow-lg);
+  }
+
+}
+
+
+/* ==========================================================================
+   11. CSS ANIMATIONS — Keyframes Library
+   ========================================================================== */
+
+/* ── @keyframes: grapple-pull ─────────────────────────────────────────── */
+/* The featured banner is pulled onto the screen like Joker's grappling hook */
+@keyframes grapple-pull {
+  0% {
+    /* CSS transformation — starts above and right, almost off-screen */
+    transform: translateX(60px) translateY(-40px) rotate(3deg) scale(0.92);
+    opacity: 0;
+  }
+  60% {
+    /* overshoot — bounces past the final position for energy */
+    transform: translateX(-6px) translateY(3px) rotate(-0.5deg) scale(1.01);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(2px) translateY(-1px) rotate(0.2deg) scale(1.0);
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── @keyframes: cable-extend ─────────────────────────────────────────── */
+@keyframes cable-extend {
+  0%   { transform: rotate(-35deg) scaleY(0); opacity: 0; }
+  60%  { transform: rotate(-35deg) scaleY(1.1); opacity: 1; }
+  100% { transform: rotate(-35deg) scaleY(1); opacity: 0.8; }
+}
+
+/* ── @keyframes: fade-in-up ───────────────────────────────────────────── */
+/* General-purpose page entrance — use with .animate-in class */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    /* CSS transformation */
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── @keyframes: fade-in ──────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── @keyframes: slide-in-left ───────────────────────────────────────── */
+@keyframes slide-in-left {
+  from { transform: translateX(-40px); opacity: 0; }
+  to   { transform: translateX(0);     opacity: 1; }
+}
+
+/* ── @keyframes: slide-in-right ──────────────────────────────────────── */
+@keyframes slide-in-right {
+  from { transform: translateX(40px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── @keyframes: pulse-red ───────────────────────────────────────────── */
+/* Subtle glowing pulse for call-to-action buttons or accent elements */
+@keyframes pulse-red {
+  0%, 100% {
+    box-shadow: 0 0 0 0 var(--color-red-glow);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(232, 0, 42, 0);
+  }
+}
+
+/* ── @keyframes: glitch-flicker ──────────────────────────────────────── */
+/* Subtle flicker on glitch headings */
+@keyframes glitch-flicker {
+  0%, 95%, 100% { opacity: 1; }
+  96%            { opacity: 0.85; }
+  97%            { opacity: 1; }
+  98%            { opacity: 0.9; }
+}
+
+/* ── @keyframes: glitch-clip-top ─────────────────────────────────────── */
+@keyframes glitch-clip-top {
+  0%, 90%, 100% { transform: translateX(-2px); }
+  91%            { transform: translateX(4px); }
+  93%            { transform: translateX(-3px); }
+  95%            { transform: translateX(2px); }
+}
+
+/* ── @keyframes: glitch-clip-bottom ──────────────────────────────────── */
+@keyframes glitch-clip-bottom {
+  0%, 88%, 100% { transform: translateX(2px); }
+  89%            { transform: translateX(-4px); }
+  91%            { transform: translateX(3px); }
+  93%            { transform: translateX(-2px); }
+}
+
+/* ── @keyframes: rotate-in ───────────────────────────────────────────── */
+@keyframes rotate-in {
+  from { transform: rotate(-8deg) scale(0.9); opacity: 0; }
+  to   { transform: rotate(0deg)  scale(1);   opacity: 1; }
+}
+
+/* ── @keyframes: shimmer ─────────────────────────────────────────────── */
+/* Loading skeleton / decorative shimmer sweep */
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
+}
+
+/* ── Animation utility classes ────────────────────────────────────────── */
+.animate-in {
+  animation: fade-in-up 0.5s ease both;
+}
+
+.animate-in--delay-1 { animation-delay: 0.1s; }
+.animate-in--delay-2 { animation-delay: 0.2s; }
+.animate-in--delay-3 { animation-delay: 0.3s; }
+.animate-in--delay-4 { animation-delay: 0.4s; }
+
+.animate-pulse-red {
+  animation: pulse-red 2.4s ease-in-out infinite;
+}
+
+/* Respect prefers-reduced-motion — disable most animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ==========================================================================
+   12. FORM STYLING — Comment / Contact Form
+   ========================================================================== */
+
+/*
+  Targets a <form> with class .comment-form, containing:
+    - input[type="text"]   (name)
+    - input[type="email"]  (email)
+    - textarea
+    - button[type="submit"]
+*/
+
+.comment-form {
+  background: var(--color-bg-surface);
+  border: var(--border-subtle);
+  border-top: var(--border-accent);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: var(--space-8);
+  max-width: 640px;
+}
+
+.comment-form h3 {
+  font-size: var(--fs-lg);
+  color: var(--color-white);
+  margin-bottom: var(--space-6);
+}
+
+/* ── Form field group (label + input) ────────────────────────────────── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.form-group:last-of-type {
+  margin-bottom: 0;
+}
+
+/* ── Label ───────────────────────────────────────────────────────────── */
+.comment-form label,
+.form-group label {
+  font-family: var(--font-display);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-gray-mid);
+  /* CSS transition on label color */
+  transition: color var(--transition-base);
+}
+
+.form-group:focus-within label {
+  color: var(--color-red);
+}
+
+/* ── Input & Textarea shared base styles ─────────────────────────────── */
+.comment-form input[type="text"],
+.comment-form input[type="email"],
+.comment-form textarea {
+  width: 100%;
+  background: var(--color-bg-raised);
+  border: 1px solid var(--color-gray-dark);
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  padding: var(--space-3) var(--space-4);
+  outline: none;
+  /* CSS transition — border and shadow change on focus */
+  transition:
+    border-color var(--transition-base),
+    box-shadow   var(--transition-base),
+    background   var(--transition-base);
+}
+
+.comment-form input::placeholder,
+.comment-form textarea::placeholder {
+  color: var(--color-gray-mid);
+  font-size: var(--fs-sm);
+}
+
+/* ── Focus highlight ─────────────────────────────────────────────────── */
+.comment-form input[type="text"]:focus,
+.comment-form input[type="email"]:focus,
+.comment-form textarea:focus {
+  border-color: var(--color-red);
+  background: var(--color-bg-muted);
+  box-shadow:
+    0 0 0 3px rgba(232, 0, 42, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Textarea ─────────────────────────────────────────────────────────── */
+.comment-form textarea {
+  min-height: 130px;
+  resize: vertical;
+  line-height: var(--lh-normal);
+  margin-bottom: var(--space-6);
+}
+
+/* ── Two-column row for name / email on wider screens ────────────────── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+}
+
+/* ── Submit button ────────────────────────────────────────────────────── */
+.comment-form button[type="submit"],
+.btn--submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: linear-gradient(
+    135deg,
+    var(--color-red) 0%,
+    var(--color-red-dark) 100%
+  );
+  color: var(--color-white);
+  border: none;
+  /* P5 parallelogram shape — matches .btn */
+  clip-path: polygon(14px 0%, 100% 0%, calc(100% - 14px) 100%, 0% 100%);
+  padding: var(--space-3) var(--space-10);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition:
+    background   var(--transition-base),
+    box-shadow   var(--transition-base),
+    transform    var(--transition-fast);
+}
+
+/* Shimmer sweep on hover — CSS linear gradient moving across */
+.comment-form button[type="submit"]::before,
+.btn--submit::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 100%
+  );
+  /* CSS transition */
+  transition: left 0.45s ease;
+}
+
+/* ── Hover effect on submit button ──────────────────────────────────── */
+.comment-form button[type="submit"]:hover,
+.btn--submit:hover {
+  background: var(--color-red-dark);
+  box-shadow: var(--shadow-red);
+  /* CSS transformation — lifts slightly */
+  transform: translateY(-2px);
+}
+
+.comment-form button[type="submit"]:hover::before,
+.btn--submit:hover::before {
+  left: 150%;
+}
+
+.comment-form button[type="submit"]:active,
+.btn--submit:active {
+  transform: scale(0.97) translateY(0);
+}
+
+.comment-form button[type="submit"]:focus-visible,
+.btn--submit:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 3px;
+}
+
+
+/* ==========================================================================
+   13. FOOTER
+   ========================================================================== */
+
+footer {
+  background: var(--color-bg-raised);
+  border-top: var(--border-accent);
+  padding: var(--space-10) 0 var(--space-8);
+  margin-top: auto;
+  /* CSS linear gradient — subtle depth on footer */
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-bg-raised) 0%,
+    #0f0f0f 100%
+  );
+}
+
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+/* Left column: site identity */
+.footer-brand .site-logo {
+  font-size: var(--fs-lg);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.footer-brand p {
+  font-size: var(--fs-sm);
+  color: var(--color-gray-mid);
+  max-width: 280px;
+  margin: 0;
+}
+
+/* Middle column: quick links */
+.footer-links h4 {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-red);
+  margin-bottom: var(--space-3);
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.footer-links a {
+  font-size: var(--fs-sm);
+  color: var(--color-gray-mid);
+  /* CSS transition */
+  transition: color var(--transition-base), padding-left var(--transition-base);
+}
+
+.footer-links a:hover {
+  color: var(--color-white);
+  padding-left: var(--space-2);
+}
+
+.footer-links a:visited {
+  color: #666;
+}
+
+/* Right / bottom: meta information */
+.footer-meta {
+  font-size: var(--fs-xs);
+  color: var(--color-gray-mid);
+  line-height: var(--lh-loose);
+}
+
+.footer-meta a {
+  color: var(--color-red);
+  font-weight: 600;
+}
+
+.footer-meta a:hover {
+  color: var(--color-white);
+}
+
+/* Bottom bar: name, email, last-edited date, copyright */
+.footer-bottom {
+  margin-top: var(--space-8);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-gray-dark);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--fs-xs);
+  color: var(--color-gray-mid);
+  letter-spacing: 0.04em;
+}
+
+.footer-bottom .footer-author {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.footer-bottom .footer-author span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Inline red dot separator between footer items */
+.footer-bottom .footer-author span::before {
+  content: '●';
+  color: var(--color-red);
+  font-size: 6px;
+}
+
+.footer-bottom .footer-author span:first-child::before {
+  display: none;
+}
+
+.footer-bottom .footer-copyright {
+  color: var(--color-gray-mid);
+}
+
+.footer-bottom .footer-copyright strong {
+  color: var(--color-red);
+  font-weight: 700;
+}
+
+
+/* ==========================================================================
+   14. UTILITY CLASSES
+   ========================================================================== */
+
+/* Text helpers */
+.text-red     { color: var(--color-red) !important; }
+.text-white   { color: var(--color-white) !important; }
+.text-muted   { color: var(--color-gray-mid) !important; }
+.text-upper   { text-transform: uppercase; letter-spacing: 0.08em; }
+.text-center  { text-align: center; }
+.text-right   { text-align: right; }
+
+/* Spacing helpers */
+.mt-0  { margin-top: 0; }
+.mt-4  { margin-top: var(--space-4); }
+.mt-8  { margin-top: var(--space-8); }
+.mb-0  { margin-bottom: 0; }
+.mb-4  { margin-bottom: var(--space-4); }
+.mb-8  { margin-bottom: var(--space-8); }
+
+/* Display helpers */
+.d-flex   { display: flex; }
+.d-grid   { display: grid; }
+.d-none   { display: none; }
+.d-block  { display: block; }
+
+/* Visibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Red accent left-border on any element */
+.border-accent-left {
+  border-left: 4px solid var(--color-red);
+  padding-left: var(--space-4);
+}
+
+/* Shimmer loading placeholder */
+.shimmer-placeholder {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-muted) 25%,
+    var(--color-bg-raised) 50%,
+    var(--color-bg-muted) 75%
+  );
+  background-size: 200% auto;
+  animation: shimmer 1.8s linear infinite;
+  border-radius: var(--radius-sm);
+  height: 1em;
+}
+
+
+/* ==========================================================================
+   15. RESPONSIVE DESIGN — Mobile (≤ 768 px)
+   ========================================================================== */
+
+@media (max-width: 768px) {
+
+  /* ── Typography scale-down ──────────────────────────────────────────── */
+  h1, .heading-hero { font-size: var(--fs-2xl); }
+  h2               { font-size: var(--fs-xl); }
+  h3               { font-size: var(--fs-lg); }
+  .heading-glitch  { font-size: var(--fs-xl); }
+
+  /* ── Container padding ──────────────────────────────────────────────── */
+  .container {
+    padding: 0 var(--space-4);
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────────── */
+  .header-inner {
+    flex-wrap: wrap;
+    height: auto;
+    padding: var(--space-3) 0;
+    position: relative;
+  }
+
+  /* ── Navigation — collapses to hamburger ─────────────────────────────── */
+  .nav-toggle {
+    display: flex;
+    order: 3;
+  }
+
+  nav {
+    order: 4;
+    width: 100%;
+  }
+
+  .nav-list {
+    display: none;                 /* hidden until toggled */
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    background: var(--color-bg-raised);
+    border-top: var(--border-subtle);
+    padding: var(--space-3) 0;
+    gap: 0;
+  }
+
+  /* JS adds .nav-list--open to reveal the menu */
+  .nav-list.nav-list--open {
+    display: flex;
+  }
+
+  .nav-list a {
+    padding: var(--space-3) var(--space-5);
+    border-radius: 0;
+    font-size: var(--fs-base);
+    /* Remove parallelogram on mobile — full-width rows read better */
+    clip-path: none;
+  }
+
+  .nav-list a::after {
+    display: none;               /* remove underline bar on mobile */
+  }
+
+  .nav-list a:hover {
+    background: rgba(232, 0, 42, 0.12);
+    padding-left: var(--space-8);
+  }
+
+  /* ── Layout grid stacks to single column ─────────────────────────────── */
+  .content-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "article"
+      "aside";
+    gap: var(--space-6);
+    padding: var(--space-8) 0;
+  }
+
+  aside {
+    position: static;            /* remove sticky on mobile */
+  }
+
+  /* ── Images scale properly ───────────────────────────────────────────── */
+  img {
+    width: 100%;
+    height: auto;
+  }
+
+  .image-effect1,
+  .image-effect2 {
+    width: 100%;
+  }
+
+  /* ── Card grid — single column on small screens ──────────────────────── */
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Remove angular clip-path on mobile to avoid overflow edge cases */
+  .card {
+    clip-path: none;
+    border-radius: var(--radius-md);
+  }
+
+  /* ── Form adjustments ────────────────────────────────────────────────── */
+  .comment-form {
+    padding: var(--space-5);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;  /* stacks name & email fields */
+  }
+
+  /* ── Footer ──────────────────────────────────────────────────────────── */
+  .footer-inner {
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .footer-bottom .footer-author {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .footer-bottom .footer-author span::before {
+    display: none;
+  }
+
+  /* ── Grappling hook banner — simpler motion on mobile ────────────────── */
+  .grapple-content {
+    animation: fade-in 0.45s ease 0.2s both;
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .grapple-cable {
+    display: none;               /* hide cable on mobile */
+  }
+
+  .grapple-content .banner-title {
+    font-size: var(--fs-2xl);
+  }
+
+  /* ── General section spacing reduction ───────────────────────────────── */
+  section {
+    margin-bottom: var(--space-10);
+  }
+
+  main {
+    padding-bottom: var(--space-12);
+  }
+}
+
+/* ── Extra-small screens (< 480 px) ──────────────────────────────────── */
+@media (max-width: 480px) {
+  h1, .heading-hero { font-size: var(--fs-xl); }
+  h2               { font-size: var(--fs-lg); }
+
+  .container {
+    padding: 0 var(--space-3);
+  }
+
+  .grapple-content {
+    padding: var(--space-5) var(--space-4);
+  }
+
+  .comment-form {
+    padding: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   END OF styles.css
+   ========================================================================== */
